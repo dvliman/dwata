@@ -7,6 +7,10 @@ import Read from "./Read";
 
 export default () => {
   const queryContext = useContext(QueryContext);
+  if (!queryContext) {
+    return null;
+  }
+
   const { detailItemList } = queryContext;
   const operationView = {
     [globalConstants.OBJECT_CREATE]: Create,

@@ -19,6 +19,11 @@ export const slugify = (text) =>
     .replace(/^-+/, "") // Trim - from start of text
     .replace(/-+$/, ""); // Trim - from end of text
 
+/**
+ * We use QueryContext to create a new React Context inside which we place a data browser,
+ *  like Grid, Kanban or anything else. This allows us to have multiple data data browsers
+ *  in the same page (embedding).
+ */
 export const QueryContext = React.createContext({});
 QueryContext.displayName = "QueryContext";
 

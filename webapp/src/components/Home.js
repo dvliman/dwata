@@ -1,5 +1,3 @@
-import React from "react";
-
 import Source from "components/Source";
 import { Hx, Button } from "components/LayoutHelpers";
 

@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-import { tableColorBlackOnLight } from "utils";
-
 export const Section = ({ size = "", style = {}, children }) => (
   <section className={`section ${size}`} style={style}>
     <div className="container">{children}</div>
@@ -88,34 +86,6 @@ export const Button = ({
       </button>
     );
   }
-};
-
-export const ColumnHead = ({
-  label,
-  order,
-  tableColor,
-  attributes,
-  children,
-}) => {
-  let classes =
-    "inline-block font-medium text-sm leading-normal text-gray-700 hover:text-gray-900 px-2 shadow rounded cursor-pointer";
-  classes = classes + ` ${tableColorBlackOnLight(tableColor)}`;
-  if (order) {
-    if (order === "asc") {
-      classes = classes + " ord-asc";
-    } else {
-      classes = classes + " ord-desc";
-    }
-  }
-
-  return (
-    <th className="border border-gray-300 px-2 text-left">
-      <span className={classes} {...attributes}>
-        {label}
-      </span>
-      {children}
-    </th>
-  );
 };
 
 export const Panel = ({ title, hasSearch, hasTabs, children }) => (

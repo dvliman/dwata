@@ -11,7 +11,6 @@ const TableHead = () => {
     (state) => state[queryContext.key]
   );
   const schema = useSchema((state) => state[querySpecification.sourceLabel]);
-  const tableColors = querySpecification.tableColors;
   const headList = [];
   let selectedTableColumNames = [],
     _columns = [];
@@ -45,7 +44,6 @@ const TableHead = () => {
           index={i}
           tableColumnName={tableColumnName}
           label={head.name}
-          tableColor={tableColors[col.tableName]}
         />
       );
       headList.push(
@@ -61,7 +59,6 @@ const TableHead = () => {
           index={i}
           tableColumnName={tableColumnName}
           label={head.name}
-          tableColor={tableColors[col.tableName]}
         />
       );
     }

@@ -93,7 +93,7 @@ const DateTimeFilter = ({ columnName }) => {
   );
 };
 
-export default ({ columnName, singleFilter = false }) => {
+function FilterItem({ columnName, singleFilter = false }) {
   const queryContext = useContext(QueryContext);
   const querySpecification = useQuerySpecification(
     (state) => state[queryContext.key]
@@ -229,9 +229,12 @@ export default ({ columnName, singleFilter = false }) => {
       </Fragment>
     );
   }
+
   return (
     <div className="control">
       <input className="input" type="text" disabled value="Coming soon" />
     </div>
   );
-};
+}
+
+export default FilterItem;

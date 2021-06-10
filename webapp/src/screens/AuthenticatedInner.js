@@ -18,7 +18,7 @@ const AuthenticatedInner = ({ mainApp }) => {
         <Route path="/explore">
           <>
             <Detail />
-            <Notes />
+            {/* <Notes /> */}
 
             <Grid containerName="main" />
           </>

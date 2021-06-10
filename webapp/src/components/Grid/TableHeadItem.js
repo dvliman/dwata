@@ -1,10 +1,10 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 import { QueryContext } from "utils";
-import { useSchema, useQuerySpecification } from "services/store";
+import { useSchema, useQuerySpecification, useUIState } from "services/store";
 import { getColumnSchema } from "services/querySpecification/getters";
 import FilterItem from "components/QueryEditor/FilterItem";
-import { ColumnHead } from "components/LayoutHelpers";
+import { tableColorBlackOnLight } from "utils";
 
 const ColumnHeadSpecification = ({ tableColumnName }) => {
   const queryContext = useContext(QueryContext);
@@ -25,39 +25,63 @@ const ColumnHeadSpecification = ({ tableColumnName }) => {
   );
 };
 
-const TableHeadItem = ({ tableColumnName, label, tableColor, index }) => {
+const TableHeadItem = ({ tableColumnName, label, columnName, index }) => {
   const queryContext = useContext(QueryContext);
   const querySpecification = useQuerySpecification(
     (state) => state[queryContext.key]
   );
+  const uiState = useUIState((state) => state.data[queryContext.key]);
   const schema = useSchema((state) => state[querySpecification.sourceLabel]);
-  const toggleColumnHeadSpecification = useQuerySpecification(
+  const toggleColumnHeadSpecification = useUIState(
     (state) => state.toggleColumnHeadSpecification
   );
   const initiateFilter = useQuerySpecification((state) => state.initiateFilter);
-  const { activeColumnHeadSpecification } = querySpecification;
+  const { activeColumnHeadSpecification, tableColors } = uiState;
+  const tableColor = tableColors[tableColumnName.split(".")[0]];
+  const [hover, setHover] = useState(false);
 
   const handleClick = () => {
+    // This sets this column head's options widget to be ON or OFF
     toggleColumnHeadSpecification(queryContext.key, tableColumnName);
     const dataType = getColumnSchema(schema.rows, tableColumnName);
     initiateFilter(queryContext.key, tableColumnName, dataType);
   };
 
+  const handleMouseEnter = () => {
+    setHover(true);
+  };
+
+  const handleMouseLeave = () => {
+    setHover(false);
+  };
+
+  let classes =
+    "inline-block font-medium text-sm leading-normal text-gray-700 hover:text-gray-900 px-2 rounded cursor-pointer";
+
+  if (hover) {
+    classes = classes + ` shadow ${tableColorBlackOnLight(tableColor)}`;
+  }
+
+  if (querySpecification.orderBy[tableColumnName]) {
+    if (querySpecification.orderBy[tableColumnName] === "asc") {
+      classes = classes + " ord-asc";
+    } else {
+      classes = classes + " ord-desc";
+    }
+  }
+
   return (
-    <ColumnHead
-      label={label}
-      order={querySpecification.orderBy[tableColumnName]}
-      attributes={{
-        onClick: handleClick,
-      }}
-      tableColor={tableColor}
+    <th
+      className="border border-gray-300 px-2 text-left"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onClick={handleClick}
     >
-      <>
-        {activeColumnHeadSpecification === tableColumnName ? (
-          <ColumnHeadSpecification tableColumnName={tableColumnName} />
-        ) : null}
-      </>
-    </ColumnHead>
+      <span className={classes}>{label}</span>
+      {activeColumnHeadSpecification === tableColumnName ? (
+        <ColumnHeadSpecification tableColumnName={tableColumnName} />
+      ) : null}
+    </th>
   );
 };
 

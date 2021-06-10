@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import { useState, useEffect, Fragment } from "react";
 
 import { useSource } from "services/store";
 import TableList from "components/TableList";

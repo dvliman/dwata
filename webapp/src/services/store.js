@@ -6,6 +6,7 @@ import useData from "./data/store";
 import useQuerySpecification from "./querySpecification/store";
 import useApps from "./apps/store";
 import useSelected from "./selected/store";
+import useUIState from "./uiState/store";
 
 export {
   useGlobal,
@@ -16,4 +17,5 @@ export {
   useQuerySpecification,
   useApps,
   useSelected,
+  useUIState,
 };

@@ -1,6 +1,8 @@
 import create from "zustand";
 import _ from "lodash";
 
+import { initiateUIState } from "../uiState/store";
+
 const initialState = {
   sourceLabel: null,
 
@@ -42,45 +44,9 @@ const saveToLocalStorage = (key, payload) => {
   }
 };
 
-const colors = [
-  "orange",
-  "teal",
-  "pink",
-  "purple",
-  "indigo",
-  "blue",
-  "red",
-  "yellow",
-];
-
-const selectColor = (tableColumnName, existingColors = {}) => {
-  const tableName =
-    tableColumnName.indexOf(".") === -1
-      ? tableColumnName
-      : tableColumnName.split(".")[0];
-
-  if (Object.keys(existingColors).includes(tableName)) {
-    return existingColors;
-  } else {
-    let rc = colors[_.random(0, colors.length - 1)];
-    while (
-      colors.length > Object.keys(existingColors).length &&
-      Object.values(existingColors).includes(rc)
-    ) {
-      rc = colors[_.random(0, colors.length - 1)];
-    }
-    return {
-      ...existingColors,
-      [tableName]: rc,
-    };
-  }
-};
-
 const initiateQuerySpecification = (payload) => ({
   ...initialState,
   ...payload,
-
-  tableColors: selectColor(payload.select[0].tableName),
 
   // We do not set isReady:true implicitly
 });
@@ -190,15 +156,6 @@ const requestRefetch = (inner) => ({
   fetchNeeded: true,
 });
 
-const toggleColumnHeadSpecification = (inner, columnName) => ({
-  ...inner,
-  activeColumnHeadSpecification:
-    inner.activeColumnHeadSpecification === null ||
-    inner.activeColumnHeadSpecification !== columnName
-      ? columnName
-      : null,
-});
-
 const toggleColumnSelection = (inner, label) => {
   const selectedColumLabels = inner.columns.map((x) => x.label);
   if (selectedColumLabels.includes(label)) {
@@ -235,7 +192,7 @@ const toggleRelatedTable = (inner, label) => {
     return {
       ...inner,
       select: inner.select.filter((x) => x.tableName !== label),
-      tableColors: _.omit(inner.tableColors, [label]),
+      // tableColors: _.omit(inner.tableColors, [label]),
       fetchNeeded: true,
     };
   } else {
@@ -249,7 +206,7 @@ const toggleRelatedTable = (inner, label) => {
           tableName: label,
         },
       ],
-      tableColors: selectColor(label, inner.tableColors),
+      // tableColors: selectColor(label, inner.tableColors),
       fetchNeeded: true,
     };
   }
@@ -290,14 +247,17 @@ export const getQuerySpecificationPayload = (querySpecification) => ({
 export default create((set) => ({
   ...loadFromLocalStorage(),
 
-  initiateQuerySpecification: (key, payload) =>
+  initiateQuerySpecification: (key, payload) => {
     set(() => {
       const _temp = initiateQuerySpecification(payload);
       saveToLocalStorage(key, _temp);
       return {
         [key]: _temp,
       };
-    }),
+    });
+
+    initiateUIState(key, payload);
+  },
 
   nextPage: (key) =>
     set((state) => ({
@@ -342,11 +302,6 @@ export default create((set) => ({
   requestRefetch: (key) =>
     set((state) => ({
       [key]: requestRefetch(state[key]),
-    })),
-
-  toggleColumnHeadSpecification: (key, columnName) =>
-    set((state) => ({
-      [key]: toggleColumnHeadSpecification(state[key], columnName),
     })),
 
   toggleColumnSelection: (key, columnName) =>
